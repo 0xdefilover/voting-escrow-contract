@@ -110,7 +110,7 @@ contract VeToken is IVeToken, Ownable, ReentrancyGuard {
     event Supply(uint256 prevSupply, uint256 supply);
 
     /// @dev Constructor
-    constructor(address _token, string memory _version) public {
+    constructor(address _token, string memory _version) {
         require(_token != address(0), "_token is zero address");
         Token = _token;
         version = _version;

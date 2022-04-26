@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.7;
 
-interface IveToken {
+interface IVeToken {
     function checkpoint() external;
 
     function depositFor(address addr, uint128 value) external;

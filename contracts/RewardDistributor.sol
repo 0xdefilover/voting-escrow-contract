@@ -18,7 +18,7 @@ pragma solidity 0.8.7;
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {IveToken} from "./interfaces/IveToken.sol";
+import {IVeToken} from "./interfaces/IVeToken.sol";
 
 /// @notice This contract is used to distribute rewards to veToken holders
 /// @dev This contract Distributes rewards based on user's checkpointed veSPA balance.
@@ -57,7 +57,7 @@ contract RewardDistributor is Ownable, ReentrancyGuard {
     event RecoveredERC20(address _token, uint256 _amount);
     event MaxIterationsUpdated(uint256 _oldNo, uint256 _newNo);
 
-    constructor(uint256 _startTime) public {
+    constructor(uint256 _startTime) {
         uint256 t = (_startTime / WEEK) * WEEK;
         // All time initialization is rounded to the week
         startTime = t; // Decides the start time for reward distibution
@@ -216,7 +216,7 @@ contract RewardDistributor is Ownable, ReentrancyGuard {
             if (restake) {
                 // If restake == True, add the rewards to user's deposit
                 IERC20(Token).safeApprove(veToken, amount);
-                IveToken(veToken).depositFor(addr, uint128(amount));
+                IVeToken(veToken).depositFor(addr, uint128(amount));
             } else {
                 IERC20(Token).safeTransfer(addr, amount);
             }
@@ -250,7 +250,7 @@ contract RewardDistributor is Ownable, ReentrancyGuard {
 
         for (uint256 i = 0; i < 20; i++) {
             nextWeek = thisWeek + WEEK;
-            veTokenSupply[thisWeek] = IveToken(veToken).totalSupply(thisWeek);
+            veTokenSupply[thisWeek] = IVeToken(veToken).totalSupply(thisWeek);
             // Calculate share for the ongoing week
             if (block.timestamp < nextWeek) {
                 if (sinceLast == 0) {
@@ -294,7 +294,7 @@ contract RewardDistributor is Ownable, ReentrancyGuard {
                 break;
             }
             uint256 mid = (min + max + 1) / 2;
-            if (IveToken(veToken).getUserPointHistoryTS(addr, mid) <= ts) {
+            if (IVeToken(veToken).getUserPointHistoryTS(addr, mid) <= ts) {
                 min = mid;
             } else {
                 max = mid - 1;
@@ -313,7 +313,7 @@ contract RewardDistributor is Ownable, ReentrancyGuard {
     {
         uint256 userEpoch = 0;
         // Get the user's max epoch
-        uint256 maxUserEpoch = IveToken(veToken).userPointEpoch(addr);
+        uint256 maxUserEpoch = IVeToken(veToken).userPointEpoch(addr);
 
         require(maxUserEpoch > 0, "User has no deposit");
 
@@ -326,7 +326,7 @@ contract RewardDistributor is Ownable, ReentrancyGuard {
             userEpoch = 1;
         }
         // Get the user deposit timestamp
-        uint256 userPointTs = IveToken(veToken).getUserPointHistoryTS(
+        uint256 userPointTs = IVeToken(veToken).getUserPointHistoryTS(
             addr,
             userEpoch
         );
@@ -368,7 +368,7 @@ contract RewardDistributor is Ownable, ReentrancyGuard {
             }
 
             // Get the week's balance for the user
-            uint256 balance = IveToken(veToken).balanceOf(addr, weekCursor);
+            uint256 balance = IVeToken(veToken).balanceOf(addr, weekCursor);
             if (balance > 0) {
                 // Compute the user's share for the week.
                 toDistrbute +=
