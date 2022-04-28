@@ -9,21 +9,10 @@ import "solidity-coverage";
 
 dotenv.config();
 
-const chainIds = {
-  bscMainnet: 56,
-  bscTestnet: 97,
-  ganache: 1337,
-  hardhat: 31337,
-  ethKovan: 42,
-  ethMainnet: 1,
-  ethRopsten: 3,
-};
-
 const {
-  MORALIS_SPEEDY_NODE_KEY, 
+  ALCHEMY_API_KEY, 
   PRIVATE_KEY, 
-  BSCSCAN_API_KEY, 
-  REPORT_GAS
+  ETHERSCAN_API_KEY
 } = process.env;
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -51,32 +40,30 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      chainId: chainIds.hardhat,
-      forking: { // mainnet fork
+      forking: {
         enabled: true,
-        url: `https://speedy-nodes-nyc.moralis.io/${MORALIS_SPEEDY_NODE_KEY}/bsc/mainnet`
+        url: `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+        blockNumber: 18871247
       }
     },
-    testnet: {
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
-      chainId: chainIds.bscTestnet,
-      gasPrice: 20000000000,
-      accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : []
+    sepolia: {
+      url: `https://eth-sepolia.g.alchemy.com/v2${ALCHEMY_API_KEY}`,
+      chainId: 11_155_111,
+      accounts: [PRIVATE_KEY as string]
     },
     mainnet: {
-      url: "https://bsc-dataseed.binance.org/",
-      chainId: chainIds.bscMainnet,
-      gasPrice: 20000000000,
-      accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : []
+      url: `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+      chainId: 1,
+      accounts: [PRIVATE_KEY as string]
     }
   },
   gasReporter: {
-    enabled: REPORT_GAS !== undefined,
-    currency: "USD",
+    enabled: true,
+    currency: 'USD',
   },
   etherscan: {
-    apiKey: BSCSCAN_API_KEY,
-  },
+    apiKey: ETHERSCAN_API_KEY,
+  }
 };
 
 export default config;
