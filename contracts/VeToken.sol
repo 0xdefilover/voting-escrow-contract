@@ -16,12 +16,12 @@ pragma solidity 0.8.7;
 //@@@@@@@@@&/.(@@@@@@@@@@@@@@&/.(&@@@@@@@@@//
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@//
 
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "./interfaces/IVeToken.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { SafeERC20, IERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IVeToken } from "./interfaces/IVeToken.sol";
 
-/// @title Voting Escrow Template
+/// @title Voting Escrow Contract
 /// @notice Cooldown logic is added in the contract
 /// @notice Make contract upgradeable
 /// @notice This is a Solidity implementation of the CURVE's voting escrow.
@@ -72,7 +72,6 @@ contract VeToken is IVeToken, Ownable, ReentrancyGuard {
     }
 
     // veToken token related
-    string public version;
     string public constant name = "Vote-escrow Token";
     string public constant symbol = "veToken";
     uint8 public constant decimals = 18;
@@ -110,10 +109,9 @@ contract VeToken is IVeToken, Ownable, ReentrancyGuard {
     event Supply(uint256 prevSupply, uint256 supply);
 
     /// @dev Constructor
-    constructor(address _token, string memory _version) {
+    constructor(address _token) {
         require(_token != address(0), "_token is zero address");
         Token = _token;
-        version = _version;
         pointHistory[0].blk = block.number;
         pointHistory[0].ts = block.timestamp;
     }
